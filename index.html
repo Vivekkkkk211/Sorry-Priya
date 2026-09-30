@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Sorry, Priya ♥</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@600;700&family=Nunito:wght@600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --night1: #12040f; --night2: #2a0a26; --night3: #4a1235;
+    --card: #2b0d22; --gold: #f5c97a; --rose: #ff4d6d; --rose2: #d81e4a;
+    --cream: #ffe9ef; --muted: #dba8bd;
+    box-sizing: border-box;
+    padding-top: env(safe-area-inset-top, 0px);
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+  }
+  *, *::before, *::after { box-sizing: border-box; }
+  html { height: 100%; }
+  body {
+    height: 100%; margin: 0; overflow: hidden; color: var(--cream);
+    font-family: 'Nunito', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif; font-weight: 700;
+    background:
+      radial-gradient(ellipse at 50% 115%, var(--night3), transparent 60%),
+      linear-gradient(180deg, var(--night1), var(--night2));
+  }
+  #sky, #fx { position: fixed; inset: 0; overflow: hidden; pointer-events: none; }
+  #fx { z-index: 5; }
+  #sky i { position: absolute; width: 3px; height: 3px; border-radius: 50%; background: var(--gold); animation: twinkle ease-in-out infinite; }
+  @keyframes twinkle { 0%,100% { opacity: .15; transform: scale(.7); } 50% { opacity: .95; transform: scale(1.3); } }
+  #front { position: fixed; inset: 0; overflow: hidden; pointer-events: none; z-index: 3; }
+  #sky b, #front b { position: absolute; bottom: -60px; font-weight: 400; text-shadow: 0 0 16px currentColor; opacity: 0; animation: float linear infinite; }
+  @keyframes float {
+    0% { transform: translate(0, 0) scale(.8) rotate(-10deg); opacity: 0; }
+    10% { opacity: .95; }
+    50% { transform: translate(var(--dx, 0), -55vh) scale(1) rotate(8deg); }
+    90% { opacity: .85; }
+    100% { transform: translate(calc(var(--dx, 0) * -1), -115vh) scale(1.2) rotate(-8deg); opacity: 0; }
+  }
+  #fx b.tap { animation: tap 1.3s ease-out forwards; }
+  @keyframes tap { 0% { transform: translate(-50%, 0) scale(.5); opacity: 1; } 100% { transform: translate(calc(-50% + var(--dx, 0)), -130px) scale(1.3); opacity: 0; } }
+  #fx b { position: absolute; top: -40px; font-weight: 400; animation: fall linear forwards; text-shadow: 0 0 10px currentColor; }
+  @keyframes fall { to { transform: translateY(115vh) rotate(360deg); opacity: .8; } }
+
+  .wrap { position: relative; z-index: 1; height: 100%; overflow-y: auto; display: flex; padding: 20px; }
+  .card {
+    margin: auto; width: 100%; max-width: 440px; padding: 26px 24px 28px; text-align: center;
+    background: linear-gradient(180deg, rgba(58,18,48,.62), rgba(43,13,34,.7));
+    -webkit-backdrop-filter: blur(3px); backdrop-filter: blur(3px);
+    border: 1.5px solid rgba(245,201,122,.55); border-radius: 26px;
+    box-shadow: 0 0 0 6px rgba(245,201,122,.08), 0 30px 70px -20px rgba(255,77,109,.45);
+  }
+  .hearts { height: 22px; margin-bottom: 8px; font-size: 17px; letter-spacing: 6px; color: rgba(255,233,239,.22); transition: opacity .3s; }
+  .hearts.hide { opacity: 0; }
+  .hearts .on { color: var(--rose); text-shadow: 0 0 10px var(--rose); }
+
+  .stage { animation: pop .5s cubic-bezier(.2,1.3,.4,1) both; }
+  @keyframes pop { from { transform: translateY(14px) scale(.94); opacity: 0; } to { transform: none; opacity: 1; } }
+
+  .sticker { position: relative; width: 150px; height: 150px; margin: 0 auto 10px; display: grid; place-items: center; }
+  .sticker::before { content: ""; position: absolute; inset: 6px; border-radius: 50%; background: radial-gradient(circle, rgba(255,77,109,.38), transparent 68%); animation: glow 2.4s ease-in-out infinite; }
+  @keyframes glow { 50% { transform: scale(1.12); opacity: .75; } }
+  .sticker svg, .sticker img, .sticker video { position: relative; width: 100%; height: 100%; object-fit: contain; border-radius: 18px; }
+  .sway { transform-origin: 60px 125px; animation: sway 3.2s ease-in-out infinite; }
+  @keyframes sway { 0%,100% { transform: rotate(-2.5deg); } 50% { transform: rotate(2.5deg); } }
+  .eyes { transform-box: fill-box; transform-origin: center; animation: blink 4s infinite; }
+  @keyframes blink { 0%,94%,100% { transform: scaleY(1); } 97% { transform: scaleY(.1); } }
+  .heart { transform-box: fill-box; transform-origin: center; animation: beat 1.3s ease-in-out infinite; }
+  @keyframes beat { 0%,100% { transform: scale(1); } 15% { transform: scale(1.18); } 30% { transform: scale(1); } 45% { transform: scale(1.12); } }
+  .m, .brow, .tear { display: none; }
+  [data-mood="sad"] .m-sad, [data-mood="sad"] .brow, [data-mood="sad"] .tear { display: block; }
+  [data-mood="hope"] .m-hope, [data-mood="happy"] .m-happy { display: block; }
+  .tear { animation: drip 2.2s ease-in infinite; }
+  @keyframes drip { 0% { transform: translateY(0); opacity: 0; } 20% { opacity: 1; } 100% { transform: translateY(20px); opacity: 0; } }
+  [data-mood="happy"] .blush { opacity: .9; }
+
+  .title { font-family: 'Dancing Script', 'Brush Script MT', cursive; font-weight: 700; font-size: clamp(30px, 8vw, 40px); line-height: 1.15; margin: 0 0 10px; color: var(--gold); text-wrap: balance; }
+  .text { margin: 0 auto 22px; max-width: 32ch; font-size: 17px; line-height: 1.55; color: var(--muted); text-wrap: pretty; }
+  .final-message { margin: 0 auto 20px; max-width: 34ch; font-size: 18px; line-height: 1.6; color: var(--muted); text-wrap: pretty; }
+
+  .opts { display: flex; flex-wrap: wrap; gap: 12px; justify-content: center; align-items: center; min-height: 54px; }
+  .opts.grid { display: grid; grid-template-columns: 1fr 1fr; }
+  .btn {
+    font: inherit; font-weight: 800; font-size: 16px; padding: 13px 22px; border-radius: 14px;
+    border: 1.5px solid rgba(245,201,122,.6); background: transparent; color: var(--cream); cursor: pointer;
+    transition: transform .25s ease, background .2s; touch-action: manipulation; -webkit-tap-highlight-color: transparent;
+  }
+  .btn:hover { background: rgba(245,201,122,.12); }
+  .btn:active { transform: scale(.96); }
+  .btn:focus-visible { outline: 3px solid var(--gold); outline-offset: 3px; }
+  .btn:disabled { opacity: .55; cursor: default; }
+  .btn.primary { border-color: transparent; color: #fff; background: linear-gradient(135deg, var(--rose), var(--rose2)); box-shadow: 0 10px 26px -10px var(--rose); }
+  .btn.big { font-size: 21px; padding: 17px 42px; animation: throb 1.5s ease-in-out infinite; }
+  @keyframes throb { 0%,100% { box-shadow: 0 10px 26px -10px var(--rose), 0 0 0 0 rgba(255,77,109,.55); } 50% { box-shadow: 0 10px 26px -10px var(--rose), 0 0 0 14px rgba(255,77,109,0); } }
+  .grid .btn { padding: 15px 8px; }
+  .reaction { min-height: 24px; margin: 16px auto 0; max-width: 32ch; font-size: 15px; color: var(--gold); opacity: 0; transform: translateY(6px); transition: opacity .3s, transform .3s; }
+  .reaction.show { opacity: 1; transform: none; }
+  .link { display: inline-block; text-decoration: none; }
+  .note { margin: 14px auto 0; max-width: 32ch; font-size: 13px; line-height: 1.5; color: var(--muted); }
+  .plan { display: inline-block; margin: 0 auto 20px; padding: 10px 18px; border-radius: 14px; border: 1.5px dashed rgba(245,201,122,.6); color: var(--gold); font-size: 16px; }
+  @media (max-width: 380px) { .card { padding: 22px 16px 24px; } .btn.big { padding: 15px 30px; font-size: 19px; } }
+  @media (prefers-reduced-motion: reduce) { .sway, .eyes, .heart, .tear, .btn.big, .sticker::before, #sky i, #sky b { animation: none; } .stage { animation-duration: .01s; } }
+</style>
+</head>
+<body>
+  <div id="sky" aria-hidden="true"></div>
+  <div id="front" aria-hidden="true"></div>
+  <div id="fx" aria-hidden="true"></div>
+  <main class="wrap">
+    <section class="card">
+      <div class="hearts hide" id="hearts" aria-hidden="true"></div>
+      <div id="stage" class="stage" aria-live="polite"></div>
+    </section>
+  </main>
+
+<script>
+  // ---- Edit these -----------------------------------------------------
+  const NAME = "Priya";
+  const HIS_NUMBER = "916263387638";   // WhatsApp: country code + number, digits only
+
+  // Optional: your own GIF / video / sticker instead of the bear.
+  // Steps: 0 = first screen ... 6 = last question, 7 = thank-you screen.
+  // Example: const MEDIA = { 0: "sorry.gif", 7: "hug.mp4" };
+  const MEDIA = {
+    0: "mxj_files-teddy-bear-10283.gif",
+    1: "mxj_files-teddy-bear-10283.gif",
+    2: "susan-lu4esm-teddy-bear-4514.gif",
+    3: "susan-lu4esm-teddy-bear-4116.gif",
+    4: "mxj_files-bear-26476.gif",
+    5: "mxj_files-bear-19270.gif",
+    6: "susan-lu4esm-teddy-bear-4514.gif",
+    7: "mxj_files-bear-26476.gif"
+  };
+  // --------------------------------------------------------------------
+
+  const TOTAL = 7;
+  const state = { fix: "" };
+  let idx = 0, locked = false;
+
+  const stages = [
+    { mood: "sad", title: `Hey ${NAME}…`,
+      text: "Before you decide how angry you want to be with me, can I have two minutes of your attention? 🥺",
+      options: [{ label: "Okay… I'm listening 💗", primary: true }] },
+
+    { mood: "sad", title: "Be honest with me…",
+      text: "How much trouble am I in for disappearing into work and not giving you the time you deserved?",
+      options: [
+        { label: "A LOT 😤", primary: true, reaction: "Okay… I completely understand. I really did mess up. 🥺" },
+        { label: "A little 🤏", reaction: "I'll happily accept 'a little'… but I'm still very sorry. ❤️" },
+        { label: "I'm pretending I'm not angry 😌", reaction: "That sounds suspiciously like you're still angry. 😂❤️" }
+      ] },
+
+    { mood: "sad", title: "I owe you an apology",
+      text: "You deserved a proper good morning, some attention, and a little bit of my time today. Instead, I got completely buried in work. I'm sorry, Priya. ❤️",
+      options: [{ label: "Hmm… continue 👀", primary: true }] },
+
+    { mood: "hope", title: "But please know this…",
+      text: "Being busy doesn't mean I forgot about you. You were still somewhere in my thoughts between meetings, tasks, and everything else going on.",
+      options: [
+        { label: "That's actually sweet 🥹", primary: true, reaction: "Because it's true. You matter to me even on my busiest days. 💗" },
+        { label: "You better mean that 😤", reaction: "I do. And I'm going to show you, not just say it. ❤️" }
+      ] },
+
+    { mood: "hope", title: "So here's my promise",
+      text: "Next time work gets crazy, I won't just disappear. I'll tell you, I'll check in, and I'll make sure you still feel important to me.",
+      options: [
+        { label: "Okay… I'll remember that 🤍", primary: true, reaction: "And I hope you hold me to it. Deal? 🤝❤️" },
+        { label: "I'll believe it when I see it 😏", reaction: "Fair enough. I'll let my actions do the convincing. 😌" }
+      ] },
+
+    { mood: "happy", title: "Now let me make it up to you",
+      text: "No excuses. You get to choose what I owe you. What sounds best?", grid: true,
+      options: [
+        { label: "A proper call 📞", value: "a proper, distraction-free call tonight 📞", reaction: "Done. Tonight is officially your time. ❤️" },
+        { label: "Ice cream date 🍦", value: "an ice cream date together 🍦", reaction: "Already sounds like a very good apology plan. 😌🍦" },
+        { label: "Voice notes 🎧", value: "a whole day of cute voice notes 🎧", reaction: "Prepare yourself. I'm going to become very talkative. 😂❤️" },
+        { label: "Dinner is on you 🍝", value: "a dinner date where I treat you 🍝", reaction: "Consider dinner officially claimed. ❤️" }
+      ] },
+
+    { mood: "hope", title: "One last question…",
+      text: "After all of that, after my apology and my very serious promise… is your heart ready to forgive me?",
+      options: [
+        { label: "Okay… you're forgiven 💖", primary: true, big: true, final: true },
+        { label: "I'm still deciding 😤", dodge: true, limit: 5, giveUp: "Fine… you're forgiven 😌", final: true }
+      ] }
+  ];
+
+  const BEAR = (mood) => `
+<svg class="bear" viewBox="0 0 120 130" data-mood="${mood}" role="img" aria-label="A teddy bear holding a heart">
+ <g class="sway">
+  <circle cx="28" cy="32" r="14" fill="#b87a4b"/><circle cx="28" cy="32" r="7" fill="#e9b98f"/>
+  <circle cx="92" cy="32" r="14" fill="#b87a4b"/><circle cx="92" cy="32" r="7" fill="#e9b98f"/>
+  <ellipse cx="60" cy="108" rx="30" ry="20" fill="#c98b5a"/>
+  <circle cx="60" cy="60" r="36" fill="#d69a67"/>
+  <ellipse cx="60" cy="72" rx="15" ry="11" fill="#f6dcbc"/>
+  <ellipse cx="60" cy="66" rx="5" ry="3.5" fill="#4a2a1a"/>
+  <g class="eyes"><circle cx="46" cy="55" r="4.4" fill="#3a1f14"/><circle cx="74" cy="55" r="4.4" fill="#3a1f14"/>
+   <circle cx="47.5" cy="53.5" r="1.4" fill="#fff"/><circle cx="75.5" cy="53.5" r="1.4" fill="#fff"/></g>
+  <ellipse class="blush" cx="36" cy="68" rx="6" ry="4" fill="#ff6f8f" opacity=".55"/>
+  <ellipse class="blush" cx="84" cy="68" rx="6" ry="4" fill="#ff6f8f" opacity=".55"/>
+  <path class="brow" d="M38 46 L52 50 M82 46 L68 50" stroke="#4a2a1a" stroke-width="2.4" stroke-linecap="round" fill="none"/>
+  <path class="m m-sad" d="M53 80 Q60 73 67 80" stroke="#4a2a1a" stroke-width="2.6" stroke-linecap="round" fill="none"/>
+  <path class="m m-hope" d="M53 76 Q60 82 67 76" stroke="#4a2a1a" stroke-width="2.6" stroke-linecap="round" fill="none"/>
+  <path class="m m-happy" d="M51 75 Q60 90 69 75 Z" fill="#8a2a3c" stroke="#4a2a1a" stroke-width="2" stroke-linejoin="round"/>
+  <path class="tear" d="M41 62 q-5 8 0 11 q5 -3 0 -11z" fill="#8fd6ff"/>
+  <g class="heart"><path d="M60 122 C38 106 43 91 54 93 C58 94 60 98 60 98 C60 98 62 94 66 93 C77 91 82 106 60 122Z" fill="#ff3b5c"/>
+   <path d="M52 97 q3 -3 6 0" stroke="#ffb3c1" stroke-width="2" fill="none" stroke-linecap="round"/></g>
+  <circle cx="42" cy="102" r="7.5" fill="#d69a67"/><circle cx="78" cy="102" r="7.5" fill="#d69a67"/>
+ </g>
+</svg>`;
+
+  const stageEl = document.getElementById("stage");
+  const heartsEl = document.getElementById("hearts");
+
+  function el(tag, cls, text) {
+    const n = document.createElement(tag);
+    if (cls) n.className = cls;
+    if (text !== undefined) n.textContent = text;
+    return n;
+  }
+
+  function sticker(i, mood) {
+    const box = el("div", "sticker");
+    const src = MEDIA[i];
+    if (src) {
+      if (/\.(mp4|webm|mov)$/i.test(src)) {
+        const v = el("video");
+        v.src = src; v.autoplay = true; v.loop = true; v.muted = true; v.playsInline = true;
+        box.append(v);
+      } else {
+        const im = el("img");
+        im.src = src; im.alt = "";
+        box.append(im);
+      }
+    } else {
+      box.innerHTML = BEAR(mood);
+    }
+    return box;
+  }
+
+  function setProgress(i, show) {
+    heartsEl.classList.toggle("hide", !show);
+    heartsEl.replaceChildren(...Array.from({ length: TOTAL }, (_, k) => el("span", k < i ? "on" : "", "♥")));
+  }
+
+  function swapIn(node) {
+    stageEl.replaceChildren(node);
+    stageEl.classList.remove("stage");
+    void stageEl.offsetWidth;
+    stageEl.classList.add("stage");
+  }
+
+  function render(i) {
+    idx = i;
+    const s = stages[i];
+    setProgress(i, i > 0);
+    const box = el("div");
+    box.append(sticker(i, s.mood), el("h1", "title", s.title), el("p", "text", s.text));
+    const opts = el("div", "opts" + (s.grid ? " grid" : ""));
+    const reactEl = el("div", "reaction");
+    reactEl.setAttribute("role", "status");
+    s.options.forEach((o) => opts.append(makeButton(o, opts, reactEl)));
+    box.append(opts, reactEl);
+    swapIn(box);
+  }
+
+  function makeButton(o, opts, reactEl) {
+    const b = el("button", "btn", o.label);
+    b.type = "button";
+    if (o.primary) b.classList.add("primary");
+    if (o.big) b.classList.add("big");
+
+    if (o.dodge) {
+      let curX = 0, curY = 0, tries = 0, gaveUp = false;
+      const LIMIT = o.limit || 4;
+      const run = () => {
+        if (gaveUp) return;
+        if (++tries >= LIMIT) {
+          gaveUp = true;
+          b.textContent = o.giveUp;
+          b.classList.add("primary");
+          b.style.transform = "translate(0,0)";
+          return;
+        }
+        b.style.transition = "none";
+        b.style.transform = "none";
+        const r = b.getBoundingClientRect();
+        b.style.transform = `translate(${curX}px, ${curY}px)`;
+        void b.offsetWidth;
+        b.style.transition = "";
+        let nx = (Math.random() < .5 ? -1 : 1) * (60 + Math.random() * 70);
+        let ny = (Math.random() < .5 ? -1 : 1) * (30 + Math.random() * 60);
+        if (r.left + nx < 8 || r.right + nx > innerWidth - 8) nx = -nx;
+        if (r.top + ny < 8 || r.bottom + ny > innerHeight - 8) ny = -ny;
+        curX = nx; curY = ny;
+        b.style.transform = `translate(${nx}px, ${ny}px)`;
+      };
+      b.addEventListener("pointerenter", (e) => { if (e.pointerType === "mouse") run(); });
+      b.addEventListener("pointerdown", (e) => { if (!gaveUp && e.pointerType !== "mouse") { e.preventDefault(); run(); } });
+      b.addEventListener("click", (e) => {
+        if (!gaveUp) { e.preventDefault(); run(); return; }
+        choose(o, opts, reactEl);
+      });
+      return b;
+    }
+    b.addEventListener("click", () => choose(o, opts, reactEl));
+    return b;
+  }
+
+  function choose(o, opts, reactEl) {
+    if (locked) return;
+    if (o.value) state.fix = o.value;
+    if (o.final) { renderYes(); return; }
+    if (o.reaction) {
+      locked = true;
+      reactEl.textContent = o.reaction;
+      reactEl.classList.add("show");
+      [...opts.children].forEach((c) => { c.disabled = true; });
+      setTimeout(() => { locked = false; render(idx + 1); }, 1700);
+    } else {
+      render(idx + 1);
+    }
+  }
+
+  function renderYes() {
+    setProgress(TOTAL, true);
+    burst(70);
+    setTimeout(() => burst(45), 1400);
+
+    const box = el("div");
+    box.append(
+      sticker(7, "happy"),
+      el("h1", "title", `Thank you, my ${NAME} ❤️`),
+      el("p", "final-message",
+        `I'm really lucky to have you, ${NAME}. I'm sorry for today, and I don't want you to ever feel like you come second to work or anything else. I'll try to be better, not just say it. ❤️`)
+    );
+    if (state.fix) box.append(el("div", "plan", `Our make-up plan: ${state.fix}`));
+
+    const msg = `Okay, I forgive you 💖 I saw your little sorry surprise.` +
+      (state.fix ? ` And yes, I choose ${state.fix} as our make-up plan.` : "") +
+      ` Now keep your promise, okay? 😌❤️`;
+    const link = el("a", "btn primary link", "Send my forgiveness 💌");
+    link.href = `https://wa.me/${HIS_NUMBER}?text=${encodeURIComponent(msg)}`;
+    link.target = "_blank";
+    link.rel = "noopener noreferrer";
+
+    const opts = el("div", "opts");
+    opts.append(link);
+    box.append(opts, el("p", "note", "WhatsApp will open with the message already written. Just press send. ❤️"));
+    swapIn(box);
+  }
+
+  const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  function seedSky() {
+    const sky = document.getElementById("sky");
+    for (let i = 0; i < 50; i++) {
+      const s = document.createElement("i");
+      s.style.left = Math.random() * 100 + "%";
+      s.style.top = Math.random() * 100 + "%";
+      s.style.animationDuration = 2 + Math.random() * 4 + "s";
+      s.style.animationDelay = -Math.random() * 5 + "s";
+      sky.appendChild(s);
+    }
+    const tones = ["#ff4d6d", "#ff8fa3", "#ff3b5c", "#f5c97a", "#ffb3c1"];
+    const CUTE = ["💗", "💕", "💖", "💘", "🩷", "♥"];
+    for (let i = 0; i < (reduce ? 12 : 50); i++) {
+      const h = document.createElement("b");
+      h.textContent = CUTE[i % CUTE.length];
+      h.style.color = tones[i % tones.length];
+      h.style.left = Math.random() * 100 + "%";
+      h.style.fontSize = 16 + Math.random() * 34 + "px";
+      h.style.setProperty("--dx", (Math.random() * 80 - 40) + "px");
+      h.style.animationDuration = 8 + Math.random() * 9 + "s";
+      h.style.animationDelay = -Math.random() * 17 + "s";
+      sky.appendChild(h);
+    }
+    // big soft hearts for depth
+    for (let i = 0; i < (reduce ? 3 : 8); i++) {
+      const h = document.createElement("b");
+      h.textContent = "♥";
+      h.style.color = i % 2 ? "rgba(255,77,109,.4)" : "rgba(245,201,122,.3)";
+      h.style.left = Math.random() * 100 + "%";
+      h.style.fontSize = 70 + Math.random() * 60 + "px";
+      h.style.filter = "blur(3px)";
+      h.style.setProperty("--dx", (Math.random() * 100 - 50) + "px");
+      h.style.animationDuration = 14 + Math.random() * 10 + "s";
+      h.style.animationDelay = -Math.random() * 24 + "s";
+      sky.appendChild(h);
+    }
+    // a few small cute hearts drifting in front of everything
+    const front = document.getElementById("front");
+    for (let i = 0; i < (reduce ? 3 : 10); i++) {
+      const h = document.createElement("b");
+      h.textContent = CUTE[i % 5];
+      h.style.left = Math.random() * 100 + "%";
+      h.style.fontSize = 16 + Math.random() * 12 + "px";
+      h.style.setProperty("--dx", (Math.random() * 80 - 40) + "px");
+      h.style.animationDuration = 9 + Math.random() * 8 + "s";
+      h.style.animationDelay = -Math.random() * 17 + "s";
+      front.appendChild(h);
+    }
+  }
+
+  // tap or click anywhere to release a few hearts
+  addEventListener("pointerdown", (e) => {
+    const box = document.getElementById("fx");
+    for (let i = 0; i < 5; i++) {
+      const s = document.createElement("b");
+      s.className = "tap";
+      s.textContent = "♥";
+      s.style.color = ["#ff4d6d", "#ff8fa3", "#f5c97a"][i % 3];
+      s.style.left = e.clientX + "px";
+      s.style.top = e.clientY + "px";
+      s.style.fontSize = 14 + Math.random() * 16 + "px";
+      s.style.setProperty("--dx", (Math.random() * 90 - 45) + "px");
+      s.style.animationDelay = i * 0.06 + "s";
+      box.appendChild(s);
+      setTimeout(() => s.remove(), 1800);
+    }
+  });
+
+  function burst(n) {
+    const box = document.getElementById("fx");
+    const colors = ["#ff4d6d", "#f5c97a", "#ff8fa3", "#ffe9ef"];
+    for (let i = 0; i < n; i++) {
+      const s = document.createElement("b");
+      s.textContent = Math.random() < .8 ? "♥" : "✦";
+      s.style.color = colors[i % colors.length];
+      s.style.left = Math.random() * 100 + "%";
+      s.style.fontSize = 16 + Math.random() * 24 + "px";
+      s.style.animationDuration = 2.8 + Math.random() * 3 + "s";
+      s.style.animationDelay = Math.random() * .9 + "s";
+      box.appendChild(s);
+      setTimeout(() => s.remove(), 8000);
+    }
+  }
+
+  document.title = `Sorry, ${NAME} ♥`;
+  seedSky();
+  render(0);
+</script>
+</body>
+</html>
